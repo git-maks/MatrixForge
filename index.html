@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MatrixForge</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js" integrity="sha512-7tWCgq9tTYS/QkGVyqDke4wpkI/oSoWjnDuXym7zn7qGa8ou5D1nAC4YWvXhMO8p/oQzXwJ/4X7/oSn7F/xY4Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <h1><span class="app-icon">⚒️</span> MatrixForge</h1>
+            
+            <div class="control-group">
+                <label>Grid Size</label>
+                <div class="grid-size-controls">
+                    <button class="size-btn" data-size="2">2x2</button>
+                    <button class="size-btn active" data-size="3">3x3</button>
+                    <button class="size-btn" data-size="4">4x4</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>Upload Texture</label>
+                <label for="bg-upload" class="file-upload-btn">
+                    <span>📂 Choose Image</span>
+                    <input type="file" id="bg-upload" accept="image/*">
+                </label>
+            </div>
+
+            <div class="control-group">
+                <label>Heatmap Colors</label>
+                <div id="color-list" class="color-pickers">
+                    <!-- Colors injected by JS -->
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="opacity-slider">Heatmap Opacity</label>
+                <input type="range" id="opacity-slider" min="0" max="100" value="50">
+            </div>
+
+            <div class="control-group">
+                <label>Text Style</label>
+                <div class="text-controls">
+                    <input type="color" id="font-color" value="#000000">
+                    <input type="range" id="font-size" min="12" max="48" value="24">
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="text-stroke">
+                    <label for="text-stroke">Stroke/Shadow</label>
+                </div>
+            </div>
+
+            <div class="control-group download-group">
+                <button id="download-btn">Download PNG</button>
+            </div>
+        </aside>
+
+        <main class="preview-area">
+            <div id="matrix-container" class="matrix-container">
+                <!-- Header -->
+                <input type="text" class="matrix-title" placeholder="Matrix Title" value="Confusion Matrix">
+
+                <!-- Accuracy Display -->
+                <div id="stats-display" class="accuracy-display">Accuracy: <span id="accuracy-value">0%</span></div>
+
+                <!-- Matrix Grid Layer -->
+                <div id="matrix-grid" class="matrix-grid">
+                    <!-- Grid items will be generated here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

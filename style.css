@@ -1,0 +1,456 @@
+:root {
+    --bg-color: #1a1a1a;
+    --panel-bg: rgba(30, 30, 30, 0.7);
+    --text-color: #e0e0e0;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --primary-color: #007bff;
+    --gap-size: 10px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d3436 100%);
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.app-container {
+    display: flex;
+    background-color: var(--panel-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    width: 100%;
+    max-width: 1200px;
+    height: 90vh;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.sidebar {
+    width: 300px;
+    padding: 20px;
+    border-right: 1px solid var(--border-color);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.sidebar h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.app-icon {
+    font-size: 1.8rem;
+}
+
+.grid-size-controls {
+    display: flex;
+    gap: 5px;
+}
+
+.size-btn {
+    flex: 1;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
+    color: #aaa;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.size-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.size-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.control-group label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #bbb;
+}
+
+select, input[type="range"], button {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
+    color: white;
+    padding: 8px;
+    border-radius: 6px;
+}
+
+select option {
+    background: #333;
+}
+
+.color-pickers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.text-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.add-color-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px dashed var(--border-color);
+    color: #aaa;
+    padding: 5px;
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.add-color-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.download-group {
+    margin-top: auto;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 5px;
+}
+
+.checkbox-group input {
+    width: auto;
+}
+
+button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: opacity 0.2s;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+.file-upload-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px dashed var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    font-weight: bold;
+    color: #aaa;
+}
+
+.file-upload-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.file-upload-btn input {
+    display: none;
+}
+
+.preview-area {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    padding: 20px;
+    overflow: auto;
+}
+
+.matrix-container {
+    display: grid;
+    grid-template-columns: auto; /* Just one column now */
+    grid-template-rows: auto auto auto; /* Header, Accuracy, MatrixGrid */
+    gap: 10px;
+    background-color: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(5px);
+    padding: 40px;
+    border-radius: 6px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    align-items: center;
+    justify-items: center;
+}
+
+.matrix-title {
+    grid-column: 1;
+    grid-row: 1;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    outline: none;
+    margin-bottom: 10px;
+}
+
+.accuracy-display {
+    grid-column: 1;
+    grid-row: 2;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.matrix-grid {
+    grid-column: 1;
+    grid-row: 3;
+    display: grid;
+    /* grid-template-columns/rows set by JS */
+    gap: var(--gap-size);
+    align-items: center;
+    justify-items: center;
+}
+
+.scale-container {
+    /* Grid positioning handled by JS */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%; /* Match grid height */
+    width: 40px;
+    margin-left: 10px;
+    position: relative; /* For absolute labels */
+}
+
+.color-scale {
+    width: 20px;
+    height: 100%; /* Full height */
+    border-radius: 6px;
+    /* Border removed */
+    background: linear-gradient(to top, white, blue);
+    background-repeat: no-repeat;
+}
+
+.scale-label {
+    position: absolute;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #aaa;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#scale-max {
+    top: -25px;
+}
+
+#scale-min {
+    bottom: -25px;
+}
+
+.matrix-cell {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+    from { opacity: 0; transform: scale(0.5); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Layer 1: Background Image Part */
+.cell-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-repeat: no-repeat;
+    z-index: 1;
+}
+
+/* Layer 2: Heatmap Overlay */
+.cell-heatmap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    transition: background-color 0.2s, opacity 0.2s;
+}
+
+/* Layer 3: Content (Input) */
+.cell-input {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    text-align: center;
+    font-weight: bold;
+    outline: none;
+}
+
+/* Color Picker Styling */
+input[type="color"] {
+    -webkit-appearance: none;
+    appearance: none;
+    border: 2px solid rgba(255,255,255,0.2);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: transform 0.1s;
+    background: none;
+    box-sizing: border-box;
+    flex-shrink: 0; /* Prevent squishing */
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+    padding: 0;
+}
+
+/* Add Color Circle Button */
+.add-color-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    color: #aaa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0;
+    transition: all 0.3s ease;
+    animation: fadeIn 0.3s ease;
+}
+
+.add-color-circle:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: white;
+    color: white;
+    transform: scale(1.1);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Stroke effect */
+.text-stroke {
+    text-shadow: 
+        -1px -1px 0 #000,  
+         1px -1px 0 #000,
+        -1px  1px 0 #000,
+         1px  1px 0 #000;
+}
+
+/* Individual Labels (Headers) */
+.grid-label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+.grid-label input {
+    width: 100%;
+    text-align: center;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-weight: bold;
+    color: inherit;
+}
+
+/* Vertical Labels for Y-Axis Rows */
+.y-axis-label {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    height: 100px; /* Match cell height */
+    width: auto;
+}
+
+.y-axis-label input {
+    width: 30px; /* Narrow width for vertical text container */
+    height: 100%;
+}
+
+/* Hide number spinners */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}

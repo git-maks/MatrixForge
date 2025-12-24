@@ -1,0 +1,10 @@
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Editor specific
+.vscode/
+*.code-workspace
+
+# Dependencies
+node_modules/
