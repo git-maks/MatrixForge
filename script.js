@@ -102,6 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Render existing colors
         state.colors.forEach((color, index) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'color-picker-wrapper';
+            
             const input = document.createElement('input');
             input.type = 'color';
             input.value = color;
@@ -111,7 +114,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateHeatmap();
                 updateScale();
             });
-            elements.colorList.appendChild(input);
+            wrapper.appendChild(input);
+            
+            // Add remove button for 3rd color and beyond
+            if (index >= 2) {
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-color-btn';
+                removeBtn.innerHTML = '×';
+                removeBtn.title = 'Remove Color';
+                removeBtn.addEventListener('click', () => {
+                    state.colors.splice(index, 1);
+                    renderColorPickers();
+                    updateHeatmap();
+                    updateScale();
+                });
+                wrapper.appendChild(removeBtn);
+            }
+            
+            elements.colorList.appendChild(wrapper);
         });
 
         // Render Add Button if < 3 colors
@@ -386,8 +406,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = elements.matrixContainer;
         if (elements.transparentBg.checked) {
             container.style.backgroundColor = 'transparent';
+            container.classList.add('checkerboard-bg');
         } else {
             container.style.backgroundColor = elements.bgColor.value;
+            container.classList.remove('checkerboard-bg');
         }
     }
 
