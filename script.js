@@ -436,9 +436,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function downloadImage() {
         const node = document.getElementById('matrix-container');
         
-        // html-to-image might need a moment or specific config
-        // We use the global htmlToImage object from the CDN
-        if (typeof htmlToImage === 'undefined') {
+        // Check if library is loaded
+        if (typeof htmlToImage === 'undefined' || !htmlToImage || !htmlToImage.toPng) {
+            console.error('htmlToImage library not found:', typeof htmlToImage);
             alert('Image generation library not loaded.');
             return;
         }
