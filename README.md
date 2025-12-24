@@ -1,25 +1,36 @@
-# MatrixForge
+# MatrixForge ⚒️
 
-A client-side web application for creating beautiful confusion matrices.
+Ever needed to create a stunning confusion matrix with a custom background image showing through? Yeah, me too. That's why MatrixForge exists.
 
-## Features
-- **No Servers**: Runs entirely in the browser.
-- **Dynamic Grid**: Support for 2x2, 3x3, and 4x4 matrices.
-- **Cookie Cutter Visuals**: Upload an image (e.g., X-Ray) that is only visible through the matrix tiles.
-- **Auto-Math**: Automatically calculates accuracy and heatmap intensity.
-- **Customization**: Full control over colors, opacity, and text styles.
-- **Export**: Download high-resolution PNGs.
+![MatrixForge Screenshot](screenshot.png)
 
-## How to Run
-Simply open `index.html` in any modern web browser.
+## What is this?
 
-## Deployment
-This project is designed to be deployed on GitHub Pages.
-1. Push the code to a GitHub repository.
-2. Go to Settings > Pages.
-3. Select the `main` branch as the source.
-4. Your site will be live!
+MatrixForge lets you build beautiful confusion matrices right in your browser. Upload an X-ray, medical scan, or any image, and watch it peek through your matrix tiles like magic. No installation, no servers, no fuss—just open and go.
 
-## Tech Stack
-- Vanilla HTML, CSS, JavaScript.
-- [html-to-image](https://github.com/bubkoo/html-to-image) for image generation.
+## Cool Stuff It Does
+
+- **Works offline** - Everything runs in your browser, no server needed
+- **Flexible grids** - Switch between 2x2, 3x3, and 4x4 on the fly
+- **Image masking** - Your background image shows through the matrix tiles (the "cookie cutter" effect)
+- **Smart calculations** - Automatically computes accuracy and generates heatmaps based on your data
+- **Full customization** - Tweak colors, opacity, fonts, and spacing to match your style
+- **Export ready** - Download high-resolution PNGs for your presentations
+
+## Getting Started
+
+Just open [index.html](index.html) in any modern browser. That's it!
+
+Type your confusion matrix values, upload a background image if you want, adjust the colors and styles, then hit download when you're happy with it.
+
+## Deploying
+
+Want to host this on GitHub Pages? Easy:
+1. Push this repo to GitHub
+2. Go to Settings → Pages
+3. Set source to the `main` branch
+4. Done! Your site is live
+
+## Under the Hood
+
+Built with vanilla JavaScript, HTML, and CSS. Uses [html-to-image](https://github.com/bubkoo/html-to-image) for generating those crispy PNG exports.
