@@ -23,6 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
         fontColor: document.getElementById('font-color'),
         fontSize: document.getElementById('font-size'),
         textStroke: document.getElementById('text-stroke'),
+        bgColor: document.getElementById('bg-color'),
+        transparentBg: document.getElementById('transparent-bg'),
         downloadBtn: document.getElementById('download-btn'),
         matrixContainer: document.getElementById('matrix-container'),
         matrixGrid: document.getElementById('matrix-grid'),
@@ -42,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderColorPickers();
         renderGrid();
         updateScale(); // Init scale
+        updateMatrixBackground(); // Init background
     }
 
     function bindEvents() {
@@ -76,6 +79,14 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.fontSize.addEventListener('input', (e) => {
             state.text.size = parseInt(e.target.value);
             updateTextStyle();
+        });
+
+        elements.bgColor.addEventListener('input', () => {
+            updateMatrixBackground();
+        });
+
+        elements.transparentBg.addEventListener('change', () => {
+            updateMatrixBackground();
         });
 
         elements.textStroke.addEventListener('change', (e) => {
@@ -371,6 +382,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function updateMatrixBackground() {
+        const container = elements.matrixContainer;
+        if (elements.transparentBg.checked) {
+            container.style.backgroundColor = 'transparent';
+        } else {
+            container.style.backgroundColor = elements.bgColor.value;
+        }
+    }
+
     function updateStats() {
         const size = state.gridSize;
         let total = 0;
@@ -443,7 +463,17 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        htmlToImage.toPng(node)
+        const options = {
+            pixelRatio: 2,
+            quality: 1.0
+        };
+
+        // Add background color if not transparent
+        if (!elements.transparentBg.checked) {
+            options.backgroundColor = elements.bgColor.value;
+        }
+
+        htmlToImage.toPng(node, options)
             .then(function (dataUrl) {
                 const link = document.createElement('a');
                 link.download = 'matrix-forge.png';
