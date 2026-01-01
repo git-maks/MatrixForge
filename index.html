@@ -53,6 +53,18 @@
             </div>
 
             <div class="control-group">
+                <label>Header Style</label>
+                <div class="text-controls">
+                    <input type="color" id="header-color" value="#ffffff">
+                    <input type="range" id="header-size" min="16" max="64" value="24">
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="header-stroke">
+                    <label for="header-stroke">Stroke/Shadow</label>
+                </div>
+            </div>
+
+            <div class="control-group">
                 <label>Export Background</label>
                 <div class="text-controls">
                     <input type="color" id="bg-color" value="#1a1a1a">
@@ -72,6 +84,7 @@
             <div id="matrix-container" class="matrix-container">
                 <!-- Header -->
                 <input type="text" class="matrix-title" placeholder="Matrix Title" value="Confusion Matrix">
+                <span id="title-measure" class="title-measure" aria-hidden="true"></span>
 
                 <!-- Accuracy Display -->
                 <div id="stats-display" class="accuracy-display">Accuracy: <span id="accuracy-value">0%</span></div>

@@ -211,9 +211,9 @@ button:hover {
 
 .matrix-container {
     display: grid;
-    grid-template-columns: auto; /* Just one column now */
-    grid-template-rows: auto auto auto; /* Header, Accuracy, MatrixGrid */
-    gap: 10px;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+    gap: 0;
     background-color: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(5px);
     padding: 40px;
@@ -222,35 +222,50 @@ button:hover {
     border: 1px solid rgba(255, 255, 255, 0.05);
     align-items: center;
     justify-items: center;
+    width: fit-content;
+    max-width: calc(100vw - 340px);
+}
+
+/* Hide original title and accuracy that exist outside grid */
+.matrix-container > .matrix-title,
+.matrix-container > #stats-display {
+    display: none;
 }
 
 .matrix-title {
-    grid-column: 1;
-    grid-row: 1;
     background: transparent;
     border: none;
     color: white;
     font-size: 1.5rem;
     font-weight: bold;
     text-align: center;
-    width: 100%;
+    width: auto;
     outline: none;
     margin-bottom: 10px;
+    padding: 0;
+    border-radius: 0;
+    white-space: nowrap;
+    overflow: visible;
+    transition: color 0.2s ease, font-size 0.2s ease;
+}
+
+.title-measure {
+    position: absolute;
+    visibility: hidden;
+    white-space: pre;
+    padding: 0;
 }
 
 .accuracy-display {
-    grid-column: 1;
-    grid-row: 2;
     font-size: 1.2rem;
     font-weight: bold;
     color: #fff;
-    margin-bottom: 10px;
+    margin-bottom: 16px !important;
     text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    text-align: center;
 }
 
 .matrix-grid {
-    grid-column: 1;
-    grid-row: 3;
     display: grid;
     /* grid-template-columns/rows set by JS */
     gap: var(--gap-size);
@@ -262,19 +277,27 @@ button:hover {
     /* Grid positioning handled by JS */
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     height: 100%; /* Match grid height */
-    width: 40px;
-    margin-left: 10px;
-    position: relative; /* For absolute labels */
+    width: 60px;
+    margin-left: 6px;
+    margin-right: 6px;
+    position: relative;
+}
+
+.scale-bar {
+    position: relative;
+    height: 100%;
+    width: auto;
+    display: flex;
+    justify-content: flex-start;
 }
 
 .color-scale {
     width: 20px;
     height: 100%; /* Full height */
     border-radius: 6px;
-    /* Border removed */
     background: linear-gradient(to top, white, blue);
     background-repeat: no-repeat;
 }
@@ -284,16 +307,33 @@ button:hover {
     font-size: 0.9rem;
     font-weight: bold;
     color: #aaa;
-    left: 50%;
-    transform: translateX(-50%);
+    pointer-events: none;
+    left: 25px;
 }
 
-#scale-max {
-    top: -25px;
+.scale-label--max {
+    top: 0%;
+    transform: translateY(0%);
 }
 
-#scale-min {
-    bottom: -25px;
+.scale-label--min {
+    top: 100%;
+    transform: translateY(-100%);
+}
+
+.scale-label--q3 {
+    top: 25%;
+    transform: translateY(-50%);
+}
+
+.scale-label--mid {
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.scale-label--q1 {
+    top: 75%;
+    transform: translateY(-50%);
 }
 
 .matrix-cell {

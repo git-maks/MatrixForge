@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
         colors: ['#ffffff', '#0000ff'], // Array of colors
         opacity: 0.5,
         text: { color: '#000000', size: 24, stroke: false },
+        header: { color: '#ffffff', size: 24, stroke: false },
         labels: {
             x: Array(4).fill(''),
             y: Array(4).fill('')
@@ -27,11 +28,20 @@ document.addEventListener('DOMContentLoaded', () => {
         transparentBg: document.getElementById('transparent-bg'),
         downloadBtn: document.getElementById('download-btn'),
         matrixContainer: document.getElementById('matrix-container'),
+        matrixTitle: document.querySelector('.matrix-title'),
+        titleMeasure: document.getElementById('title-measure'),
         matrixGrid: document.getElementById('matrix-grid'),
         accuracyValue: document.getElementById('accuracy-value'),
+        statsDisplay: document.getElementById('stats-display'),
         colorScale: document.getElementById('color-scale'),
         scaleMax: document.getElementById('scale-max'),
-        scaleMin: document.getElementById('scale-min')
+        scaleMin: document.getElementById('scale-min'),
+        scaleQ1: document.getElementById('scale-q1'),
+        scaleMid: document.getElementById('scale-mid'),
+        scaleQ3: document.getElementById('scale-q3'),
+        headerColor: document.getElementById('header-color'),
+        headerSize: document.getElementById('header-size'),
+        headerStroke: document.getElementById('header-stroke')
     };
 
     // Constants
@@ -43,6 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
         bindEvents();
         renderColorPickers();
         renderGrid();
+        updateTitleStyle();
+        updateTitleWidth();
         updateScale(); // Init scale
         updateMatrixBackground(); // Init background
     }
@@ -92,6 +104,25 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.textStroke.addEventListener('change', (e) => {
             state.text.stroke = e.target.checked;
             updateTextStyle();
+        });
+
+        elements.headerColor.addEventListener('input', (e) => {
+            state.header.color = e.target.value;
+            updateTitleStyle();
+        });
+
+        elements.headerSize.addEventListener('input', (e) => {
+            state.header.size = parseInt(e.target.value);
+            updateTitleStyle();
+        });
+
+        elements.headerStroke.addEventListener('change', (e) => {
+            state.header.stroke = e.target.checked;
+            updateTitleStyle();
+        });
+
+        elements.matrixTitle.addEventListener('input', () => {
+            updateTitleWidth();
         });
 
         elements.downloadBtn.addEventListener('click', downloadImage);
@@ -174,18 +205,32 @@ document.addEventListener('DOMContentLoaded', () => {
         grid.innerHTML = '';
 
         // Set grid template
-        // Cols: Main Y | Indiv Y | Cells... | Scale
+        // Cols: Buffer | Main Y | Indiv Y | Cells... | Scale | Buffer
         grid.style.display = 'grid';
-        grid.style.gridTemplateColumns = `auto auto ` + `repeat(${size}, ${CELL_SIZE}px) auto`;
-        // Rows: Cells... | Indiv X | Main X
-        grid.style.gridTemplateRows = `repeat(${size}, ${CELL_SIZE}px) auto auto`;
+        grid.style.gridTemplateColumns = `minmax(0, 1fr) auto auto ` + `repeat(${size}, ${CELL_SIZE}px) auto minmax(0, 1fr)`;
+        // Rows: Title | Accuracy | Cells... | Indiv X | Main X
+        grid.style.gridTemplateRows = `auto auto repeat(${size}, ${CELL_SIZE}px) auto auto`;
         grid.style.gap = `${GAP_SIZE}px`;
 
-        // 1. Main Y Label (Spans all rows)
+        // 0. Title (Spans all columns to expand container)
+        const titleRow = elements.matrixTitle;
+        titleRow.style.gridColumn = `1 / -1`;
+        titleRow.style.gridRow = '1';
+        titleRow.style.marginBottom = '0';
+        grid.appendChild(titleRow);
+
+        // 0b. Accuracy (Spans all columns to expand container)
+        const accuracyRow = elements.statsDisplay;
+        accuracyRow.style.gridColumn = `1 / -1`;
+        accuracyRow.style.gridRow = '2';
+        accuracyRow.style.marginBottom = '0';
+        grid.appendChild(accuracyRow);
+
+        // 1. Main Y Label (Spans all cell rows)
         const mainY = createDiv('axis-label y-axis');
         mainY.textContent = 'True Class';
-        mainY.style.gridColumn = '1';
-        mainY.style.gridRow = `1 / span ${size}`;
+        mainY.style.gridColumn = '2';
+        mainY.style.gridRow = `3 / span ${size}`;
         // Force vertical writing mode via inline style to ensure it applies
         mainY.style.writingMode = 'vertical-rl';
         mainY.style.transform = 'rotate(180deg)';
@@ -195,8 +240,8 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < size; i++) {
             // Indiv Y Label
             const label = createLabelInput(i, 'y');
-            label.style.gridColumn = '2';
-            label.style.gridRow = `${i + 1}`;
+            label.style.gridColumn = '3';
+            label.style.gridRow = `${i + 3}`;
             // Tab Index: After all cells (size*size) + i + 1
             label.querySelector('input').tabIndex = (size * size) + i + 1;
             grid.appendChild(label);
@@ -205,8 +250,8 @@ document.addEventListener('DOMContentLoaded', () => {
             for (let j = 0; j < size; j++) {
                 const dataIndex = i * 4 + j;
                 const cell = createCell(dataIndex);
-                cell.style.gridColumn = `${j + 3}`;
-                cell.style.gridRow = `${i + 1}`;
+                cell.style.gridColumn = `${j + 4}`;
+                cell.style.gridRow = `${i + 3}`;
                 // Tab Index: (i * size) + j + 1
                 cell.querySelector('input').tabIndex = (i * size) + j + 1;
                 grid.appendChild(cell);
@@ -216,19 +261,24 @@ document.addEventListener('DOMContentLoaded', () => {
         // 3. Scale Bar (Spans all cell rows)
         const scaleContainer = createDiv('scale-container');
         scaleContainer.innerHTML = `
-            <div id="scale-max" class="scale-label">0</div>
-            <div id="color-scale" class="color-scale"></div>
-            <div id="scale-min" class="scale-label">0</div>
+            <div class="scale-bar">
+                <div id="color-scale" class="color-scale"></div>
+                <div id="scale-max" class="scale-label scale-label--max">0</div>
+                <div id="scale-q3" class="scale-label scale-label--q3">0</div>
+                <div id="scale-mid" class="scale-label scale-label--mid">0</div>
+                <div id="scale-q1" class="scale-label scale-label--q1">0</div>
+                <div id="scale-min" class="scale-label scale-label--min">0</div>
+            </div>
         `;
-        scaleContainer.style.gridColumn = `${size + 3}`;
-        scaleContainer.style.gridRow = `1 / span ${size}`;
+        scaleContainer.style.gridColumn = `${size + 4}`;
+        scaleContainer.style.gridRow = `3 / span ${size}`;
         grid.appendChild(scaleContainer);
 
         // 4. Indiv X Labels
         for (let i = 0; i < size; i++) {
             const label = createLabelInput(i, 'x');
-            label.style.gridColumn = `${i + 3}`;
-            label.style.gridRow = `${size + 1}`;
+            label.style.gridColumn = `${i + 4}`;
+            label.style.gridRow = `${size + 3}`;
             // Tab Index: After Y labels. (size*size) + size + i + 1
             label.querySelector('input').tabIndex = (size * size) + size + i + 1;
             grid.appendChild(label);
@@ -237,20 +287,24 @@ document.addEventListener('DOMContentLoaded', () => {
         // 5. Main X Label (Spans all cols of cells)
         const mainX = createDiv('axis-label x-axis');
         mainX.textContent = 'Predicted Class';
-        mainX.style.gridColumn = `3 / span ${size}`;
-        mainX.style.gridRow = `${size + 2}`;
+        mainX.style.gridColumn = `4 / span ${size}`;
+        mainX.style.gridRow = `${size + 4}`;
         grid.appendChild(mainX);
 
         // Update DOM references for scale
         elements.scaleMax = document.getElementById('scale-max');
         elements.scaleMin = document.getElementById('scale-min');
         elements.colorScale = document.getElementById('color-scale');
+        elements.scaleQ1 = document.getElementById('scale-q1');
+        elements.scaleMid = document.getElementById('scale-mid');
+        elements.scaleQ3 = document.getElementById('scale-q3');
 
         updateCellBackgrounds();
         updateHeatmap();
         updateTextStyle();
         updateStats();
         updateScale();
+        updateTitleWidth();
     }
 
     function createDiv(className) {
@@ -358,6 +412,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const inputs = document.querySelectorAll('.cell-input');
         let max = -Infinity;
         let min = Infinity;
+        let foundValue = false;
         
         // Find global min/max
         const size = state.gridSize;
@@ -366,17 +421,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 const val = state.data[i*4+j];
                 if (val > max) max = val;
                 if (val < min) min = val;
+                foundValue = true;
             }
         }
 
         // Handle edge cases
-        if (min === Infinity) { min = 0; max = 0; }
-        if (min === max) { max = min + 1; } // Avoid divide by zero range
+        let fallbackRange = false;
+        if (!foundValue || min === Infinity) {
+            min = 0; max = 1; fallbackRange = true;
+        } else if (min === max) {
+            min = 0; max = 1; fallbackRange = true;
+        }
+
+        const displayMin = min;
+        const displayMax = max;
+
+        // Avoid divide by zero range for coloring
+        let normMin = min;
+        let normMax = max;
+        if (normMin === normMax) { normMax = normMin + 1; }
+
+        const rangeDisplay = displayMax - displayMin;
+        // Use decimals if: (1) it's the 0-1 fallback, OR (2) range is small and not uniform
+        const useDecimals = (fallbackRange && displayMin === 0 && displayMax === 1) || 
+                            (!fallbackRange && Math.abs(rangeDisplay) <= 1.01 && Math.abs(rangeDisplay) > 0);
+        const formatValue = (value) => useDecimals ? value.toFixed(2) : Math.round(value);
 
         inputs.forEach(input => {
             const val = parseInt(input.value) || 0;
             // Normalize to 0..1
-            const intensity = (val - min) / (max - min);
+            const intensity = (val - normMin) / (normMax - normMin);
             const color = interpolateMultiColor(state.colors, intensity);
             
             const heatmapDiv = input.parentElement.querySelector('.cell-heatmap');
@@ -385,8 +459,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         // Update scale labels
-        if (elements.scaleMax) elements.scaleMax.textContent = max;
-        if (elements.scaleMin) elements.scaleMin.textContent = min;
+        const q1 = displayMin + rangeDisplay * 0.25;
+        const mid = displayMin + rangeDisplay * 0.5;
+        const q3 = displayMin + rangeDisplay * 0.75;
+
+        if (elements.scaleMax) elements.scaleMax.textContent = formatValue(displayMax);
+        if (elements.scaleMin) elements.scaleMin.textContent = formatValue(displayMin);
+        if (elements.scaleQ1) elements.scaleQ1.textContent = formatValue(q1);
+        if (elements.scaleMid) elements.scaleMid.textContent = formatValue(mid);
+        if (elements.scaleQ3) elements.scaleQ3.textContent = formatValue(q3);
     }
 
     function updateTextStyle() {
@@ -400,6 +481,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 input.classList.remove('text-stroke');
             }
         });
+    }
+
+    function updateTitleStyle() {
+        const title = elements.matrixTitle;
+        if (!title) return;
+
+        title.style.color = state.header.color;
+        title.style.fontSize = `${state.header.size}px`;
+        if (state.header.stroke) {
+            title.classList.add('text-stroke');
+        } else {
+            title.classList.remove('text-stroke');
+        }
+
+        updateTitleWidth();
+    }
+
+    function updateTitleWidth() {
+        const title = elements.matrixTitle;
+        const measure = elements.titleMeasure;
+        if (!title || !measure) return;
+
+        const text = title.value || title.placeholder || '';
+        const styles = window.getComputedStyle(title);
+        measure.style.fontSize = styles.fontSize;
+        measure.style.fontFamily = styles.fontFamily;
+        measure.style.fontWeight = styles.fontWeight;
+        measure.style.fontStyle = styles.fontStyle;
+        measure.style.letterSpacing = styles.letterSpacing;
+        measure.style.padding = styles.padding;
+        measure.textContent = text;
+
+        const width = Math.ceil(measure.getBoundingClientRect().width);
+        const minWidth = 160;
+        title.style.width = `${Math.max(width, minWidth) + 10}px`;
     }
 
     function updateMatrixBackground() {
