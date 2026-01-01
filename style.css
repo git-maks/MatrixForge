@@ -247,16 +247,44 @@ button:hover {
     border-radius: 0;
     white-space: pre-wrap;
     overflow: hidden !important;
+    overflow-x: hidden !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: auto !important;
     resize: none !important;
+    -webkit-resize: none !important;
+    -moz-resize: none !important;
     line-height: 1.2;
     min-height: 1.2em;
+    max-height: none !important;
     display: block;
-    field-sizing: content; /* Future-proof */
+    field-sizing: content;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
 }
 
-/* Remove resize handle for WebKit browsers specifically if standard property fails */
+/* Remove resize handle for WebKit browsers */
 .matrix-title::-webkit-resizer {
-    display: none;
+    display: none !important;
+    visibility: hidden !important;
+    background: transparent !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+/* Hide scrollbars for WebKit browsers */
+.matrix-title::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+}
+
+/* Additional WebKit textarea-specific overrides */
+.matrix-title::-webkit-textfield-decoration-container {
+    overflow: hidden !important;
 }
 
 .title-measure {
