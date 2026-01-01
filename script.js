@@ -528,13 +528,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (newWidth < maxAvailableWidth) {
             title.style.width = `${newWidth}px`;
-            title.style.height = 'auto';
-            title.style.height = title.scrollHeight + 'px';
         } else {
             title.style.width = '100%';
-            title.style.height = 'auto';
-            title.style.height = title.scrollHeight + 'px';
         }
+        
+        // Reset height to auto to correctly calculate new scrollHeight (shrink if needed)
+        title.style.height = 'auto';
+        // Set new height based on content
+        title.style.height = `${title.scrollHeight}px`;
     }
 
     function updateMatrixBackground() {
