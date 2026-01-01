@@ -504,18 +504,37 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!title || !measure) return;
 
         const text = title.value || title.placeholder || '';
+        
+        // Use state size directly to avoid transition lag
+        measure.style.fontSize = `${state.header.size}px`;
+        
         const styles = window.getComputedStyle(title);
-        measure.style.fontSize = styles.fontSize;
         measure.style.fontFamily = styles.fontFamily;
         measure.style.fontWeight = styles.fontWeight;
-        measure.style.fontStyle = styles.fontStyle;
         measure.style.letterSpacing = styles.letterSpacing;
-        measure.style.padding = styles.padding;
         measure.textContent = text;
 
-        const width = Math.ceil(measure.getBoundingClientRect().width);
+        // Calculate width
+        const textWidth = Math.ceil(measure.getBoundingClientRect().width);
         const minWidth = 160;
-        title.style.width = `${Math.max(width, minWidth) + 10}px`;
+        
+        // Calculate max available width (Viewport - Sidebar - Padding)
+        // Sidebar is 300px + 40px padding/borders approx = 340px
+        // Container padding is 40px * 2 = 80px
+        // Extra safety buffer = 40px
+        const maxAvailableWidth = window.innerWidth - 340 - 80 - 40;
+
+        const newWidth = Math.max(textWidth, minWidth) + 20;
+
+        if (newWidth < maxAvailableWidth) {
+            title.style.width = `${newWidth}px`;
+            title.style.height = 'auto';
+            title.style.height = title.scrollHeight + 'px';
+        } else {
+            title.style.width = '100%';
+            title.style.height = 'auto';
+            title.style.height = title.scrollHeight + 'px';
+        }
     }
 
     function updateMatrixBackground() {
