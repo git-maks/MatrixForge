@@ -61,6 +61,29 @@ body {
     font-size: 1.8rem;
 }
 
+.app-icon i {
+    background: linear-gradient(120deg, #b2f7ff, #007bff 80%);
+    background-size: 200% 200%;
+    background-position: 0% 50%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+    animation: icon-gradient-move 6s ease-in-out infinite;
+}
+
+@keyframes icon-gradient-move {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
 .grid-size-controls {
     display: flex;
     gap: 5px;
@@ -174,6 +197,7 @@ button:hover {
 }
 
 .file-upload-btn {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -197,6 +221,15 @@ button:hover {
 
 .file-upload-btn input {
     display: none;
+}
+
+.file-upload-btn.has-image {
+    padding: 12px;
+}
+
+.upload-loaded-text {
+    color: #aaa;
+    font-weight: bold;
 }
 
 .preview-area {
@@ -426,6 +459,16 @@ button:hover {
     text-align: center;
     font-weight: bold;
     outline: none;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+/* Export-only overlay (inserted temporarily by JS) */
+.cell-export-text {
+    font-weight: bold;
 }
 
 /* Color Picker Styling */
@@ -538,6 +581,21 @@ input[type="color"]::-webkit-color-swatch {
     color: #ccc;
 }
 
+/* Main axis labels (e.g., True/Predicted Class) */
+.axis-label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #ccc;
+}
+
+/* Rotated Y axis: add a bit more spacing (visually to the right) */
+.axis-label.y-axis {
+    margin-right: 7px;
+}
+
 .grid-label input {
     width: 100%;
     text-align: center;
@@ -546,6 +604,8 @@ input[type="color"]::-webkit-color-swatch {
     outline: none;
     font-weight: bold;
     color: inherit;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
 }
 
 /* Vertical Labels for Y-Axis Rows */
@@ -554,10 +614,11 @@ input[type="color"]::-webkit-color-swatch {
     transform: rotate(180deg);
     height: 100px; /* Match cell height */
     width: auto;
+    margin-right: 3px;
 }
 
 .y-axis-label input {
-    width: 30px; /* Narrow width for vertical text container */
+    width: 10px; /* Narrow width for vertical text container */
     height: 100%;
 }
 
@@ -577,4 +638,30 @@ input[type=number]::-webkit-outer-spin-button {
         linear-gradient(-45deg, transparent 75%, rgba(50, 50, 50, 0.5) 75%);
     background-size: 20px 20px;
     background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+}
+
+.remove-image-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    line-height: 1;
+    transition: all 0.2s;
+    z-index: 10;
+}
+
+.remove-image-btn:hover {
+    background: rgba(255, 0, 0, 0.8);
+    transform: scale(1.1);
 }

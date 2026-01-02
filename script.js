@@ -193,10 +193,50 @@ document.addEventListener('DOMContentLoaded', () => {
                 state.bgImage = event.target.result;
                 state.bgImageAspect = img.width / img.height;
                 updateCellBackgrounds();
+                updateImageUploadUI();
             };
             img.src = event.target.result;
         };
         reader.readAsDataURL(file);
+    }
+
+    function updateImageUploadUI() {
+        const uploadLabel = document.querySelector('.file-upload-btn');
+        uploadLabel.classList.toggle('has-image', Boolean(state.bgImage));
+        
+        if (state.bgImage) {
+            // Compact "loaded" state (no preview image)
+            uploadLabel.innerHTML = `
+                <span class="upload-loaded-text">Image loaded</span>
+                <button class="remove-image-btn" type="button" aria-label="Remove image">✕</button>
+                <input type="file" id="bg-upload" accept="image/*">
+            `;
+            
+            // Re-attach event listeners
+            const newInput = uploadLabel.querySelector('input');
+            newInput.addEventListener('change', handleImageUpload);
+            
+            const removeBtn = uploadLabel.querySelector('.remove-image-btn');
+            removeBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                state.bgImage = null;
+                updateCellBackgrounds();
+                updateImageUploadUI();
+            });
+        } else {
+            // Show default upload button
+            uploadLabel.innerHTML = `
+                <span>📂 Choose Image</span>
+                <input type="file" id="bg-upload" accept="image/*">
+            `;
+            
+            const newInput = uploadLabel.querySelector('input');
+            newInput.addEventListener('change', handleImageUpload);
+        }
+        
+        // Update DOM reference
+        elements.bgUpload = document.getElementById('bg-upload');
     }
 
     function renderGrid() {
@@ -359,10 +399,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateCellBackgrounds() {
-        if (!state.bgImage) return;
+        const cells = document.querySelectorAll('.cell-bg');
+
+        // If there's no image, clear any previous backgrounds.
+        if (!state.bgImage) {
+            cells.forEach(bgDiv => {
+                bgDiv.style.backgroundImage = 'none';
+                bgDiv.style.backgroundSize = '';
+                bgDiv.style.backgroundPosition = '';
+            });
+            return;
+        }
 
         const size = state.gridSize;
-        const cells = document.querySelectorAll('.cell-bg');
         
         // Calculate total grid dimensions (excluding headers)
         const totalW = size * CELL_SIZE + (size - 1) * GAP_SIZE;
@@ -626,19 +675,100 @@ document.addEventListener('DOMContentLoaded', () => {
             quality: 1.0
         };
 
-        // Add background color if not transparent
-        if (!elements.transparentBg.checked) {
+        // html-to-image can render <input> text with inconsistent padding/alignment.
+        // For export, we temporarily hide inputs and overlay centered text nodes.
+        const exportOverlays = [];
+        const inputsForExport = node.querySelectorAll('input.cell-input');
+        inputsForExport.forEach((input) => {
+            const overlay = document.createElement('div');
+            overlay.className = 'cell-export-text';
+            overlay.textContent = input.value;
+
+            const computed = window.getComputedStyle(input);
+            overlay.style.color = computed.color;
+            overlay.style.fontSize = computed.fontSize;
+            overlay.style.fontFamily = computed.fontFamily;
+            overlay.style.fontWeight = computed.fontWeight;
+            overlay.style.textShadow = computed.textShadow;
+
+            const prevVisibility = input.style.visibility;
+            input.style.visibility = 'hidden';
+
+            // Position within the cell
+            overlay.style.position = 'absolute';
+            overlay.style.inset = '0';
+            overlay.style.zIndex = '3';
+            overlay.style.display = 'flex';
+            overlay.style.alignItems = 'center';
+            overlay.style.justifyContent = 'center';
+            overlay.style.textAlign = 'center';
+            overlay.style.pointerEvents = 'none';
+            overlay.style.lineHeight = '1';
+
+            input.parentElement.appendChild(overlay);
+            exportOverlays.push({ input, prevVisibility, overlay });
+        });
+
+        // Store original styles
+        const originalBg = node.style.backgroundColor;
+        const originalBackdrop = node.style.backdropFilter;
+        const originalWebkitBackdrop = node.style.webkitBackdropFilter;
+        const originalBorder = node.style.border;
+        const originalBoxShadow = node.style.boxShadow;
+        const originalPadding = node.style.padding;
+        const originalBorderRadius = node.style.borderRadius;
+        const hadCheckerboard = node.classList.contains('checkerboard-bg');
+
+        const restoreAfterExport = () => {
+            // Restore input visibility and remove overlays
+            exportOverlays.forEach(({ input, prevVisibility, overlay }) => {
+                input.style.visibility = prevVisibility;
+                overlay.remove();
+            });
+
+            // Restore original styles if we altered them
+            if (elements.transparentBg.checked) {
+                if (hadCheckerboard) {
+                    node.classList.add('checkerboard-bg');
+                }
+                node.style.backgroundColor = originalBg;
+                node.style.backdropFilter = originalBackdrop;
+                node.style.webkitBackdropFilter = originalWebkitBackdrop;
+                node.style.border = originalBorder;
+                node.style.boxShadow = originalBoxShadow;
+                node.style.padding = originalPadding;
+                node.style.borderRadius = originalBorderRadius;
+            }
+        };
+
+        // If transparent, remove all backgrounds and frame temporarily
+        if (elements.transparentBg.checked) {
+            if (hadCheckerboard) {
+                node.classList.remove('checkerboard-bg');
+            }
+            node.style.backgroundColor = 'transparent';
+            node.style.backdropFilter = 'none';
+            node.style.webkitBackdropFilter = 'none';
+            node.style.border = 'none';
+            node.style.boxShadow = 'none';
+            node.style.padding = '0';
+            node.style.borderRadius = '0';
+        } else {
+            // Add solid background color if not transparent
             options.backgroundColor = elements.bgColor.value;
         }
 
         htmlToImage.toPng(node, options)
             .then(function (dataUrl) {
+                restoreAfterExport();
+                
                 const link = document.createElement('a');
                 link.download = 'matrix-forge.png';
                 link.href = dataUrl;
                 link.click();
             })
             .catch(function (error) {
+                restoreAfterExport();
                 console.error('oops, something went wrong!', error);
                 alert('Failed to generate image.');
             });
