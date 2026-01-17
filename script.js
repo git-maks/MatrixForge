@@ -678,6 +678,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 label.classList.remove('label-stroke');
             }
         });
+        
+            // Update accuracy display color
+            if (elements.statsDisplay) {
+                elements.statsDisplay.style.color = state.label.color;
+            }
     }
 
     function updateScale() {
