@@ -2,7 +2,7 @@
 
 Ever needed to create a stunning confusion matrix with a custom background image showing through? Yeah, me too. That's why MatrixForge exists.
 
-![MatrixForge Screenshot](screenshot.png)
+![MatrixForge Screenshot](/assets/screenshot.png)
 
 ## What is this?
 

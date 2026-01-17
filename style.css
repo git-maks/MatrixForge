@@ -68,7 +68,6 @@ body {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    text-fill-color: transparent;
     animation: icon-gradient-move 6s ease-in-out infinite;
 }
 
@@ -133,6 +132,68 @@ select, input[type="range"], button {
     border-radius: 6px;
 }
 
+/* Range slider unified hover styles */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 8px;
+    padding: 0;
+    cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-track {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    height: 8px;
+    transition: background 0.2s;
+}
+
+input[type="range"]:hover::-webkit-slider-track {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+input[type="range"]:hover::-webkit-slider-thumb {
+    background: #0099ff;
+    transform: scale(1.1);
+}
+
+input[type="range"]::-moz-range-track {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    height: 8px;
+    transition: background 0.2s;
+}
+
+input[type="range"]:hover::-moz-range-track {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+input[type="range"]:hover::-moz-range-thumb {
+    background: #0099ff;
+    transform: scale(1.1);
+}
+
 select option {
     background: #333;
 }
@@ -147,6 +208,39 @@ select option {
 .text-controls {
     display: flex;
     gap: 10px;
+    align-items: center;
+}
+
+.icon-toggle-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.icon-toggle-btn img {
+    width: 85%;
+    height: 85%;
+    filter: brightness(0) saturate(100%) invert(24%) sepia(0%) saturate(0%) hue-rotate(180deg) brightness(95%) contrast(88%);
+    /* Results in #3b3b3b */
+    transition: filter 0.2s;
+}
+
+.icon-toggle-btn:hover img {
+    filter: brightness(0) saturate(100%) invert(30%) sepia(80%) saturate(2500%) hue-rotate(195deg) brightness(95%) contrast(101%);
+    /* Lighter blue for hover */
+}
+
+.icon-toggle-btn.active img {
+    filter: brightness(0) saturate(100%) invert(26%) sepia(89%) saturate(1729%) hue-rotate(193deg) brightness(94%) contrast(101%);
+    /* Results in #0063b1 */
 }
 
 .add-color-btn {
@@ -571,6 +665,14 @@ input[type="color"]::-webkit-color-swatch {
          1px  1px 0 #000;
 }
 
+.label-stroke {
+    text-shadow: 
+        -1px -1px 0 #000,  
+         1px -1px 0 #000,
+        -1px  1px 0 #000,
+         1px  1px 0 #000;
+}
+
 /* Individual Labels (Headers) */
 .grid-label {
     display: flex;
@@ -608,6 +710,12 @@ input[type="color"]::-webkit-color-swatch {
     font-size: 13px;
 }
 
+/* Make label input placeholders match label color */
+.grid-label input::placeholder {
+    color: inherit;
+    opacity: 0.7;
+}
+
 /* Vertical Labels for Y-Axis Rows */
 .y-axis-label {
     writing-mode: vertical-rl;
@@ -615,11 +723,17 @@ input[type="color"]::-webkit-color-swatch {
     height: 100px; /* Match cell height */
     width: auto;
     margin-right: 3px;
+    display: flex;
+    align-items: flex-end; /* Align to right so it grows left */
+    justify-content: center; /* Center along the vertical axis (height) */
 }
 
 .y-axis-label input {
-    width: 10px; /* Narrow width for vertical text container */
-    height: 100%;
+    width: auto; /* Allow width to grow with text size */
+    min-width: 10px;
+    height: auto; /* Allow height to match content */
+    text-align: center; /* Center the text */
+    white-space: nowrap; /* Prevent text wrapping */
 }
 
 /* Hide number spinners */

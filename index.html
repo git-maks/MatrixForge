@@ -8,7 +8,7 @@
     <!-- Font Awesome Free CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="icon" type="image/png" href="assets/favicon.png">
 </head>
 <body>
     <div class="app-container">
@@ -21,6 +21,7 @@
                     <button class="size-btn" data-size="2">2x2</button>
                     <button class="size-btn active" data-size="3">3x3</button>
                     <button class="size-btn" data-size="4">4x4</button>
+                    <button class="size-btn" data-size="5">5x5</button>
                 </div>
             </div>
 
@@ -47,24 +48,33 @@
             <div class="control-group">
                 <label>Text Style</label>
                 <div class="text-controls">
+                    <button class="icon-toggle-btn" id="text-stroke" aria-label="Toggle text shadow">
+                        <img src="assets/text-shadow-icon.svg" alt="Shadow icon">
+                    </button>
                     <input type="color" id="font-color" value="#000000">
                     <input type="range" id="font-size" min="12" max="48" value="24">
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="text-stroke">
-                    <label for="text-stroke">Stroke/Shadow</label>
                 </div>
             </div>
 
             <div class="control-group">
                 <label>Header Style</label>
                 <div class="text-controls">
+                    <button class="icon-toggle-btn" id="header-stroke" aria-label="Toggle header shadow">
+                        <img src="assets/text-shadow-icon.svg" alt="Shadow icon">
+                    </button>
                     <input type="color" id="header-color" value="#ffffff">
                     <input type="range" id="header-size" min="16" max="64" value="24">
                 </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="header-stroke">
-                    <label for="header-stroke">Stroke/Shadow</label>
+            </div>
+
+            <div class="control-group">
+                <label>Label Style</label>
+                <div class="text-controls">
+                    <button class="icon-toggle-btn" id="label-stroke" aria-label="Toggle label shadow">
+                        <img src="assets/text-shadow-icon.svg" alt="Shadow icon">
+                    </button>
+                    <input type="color" id="label-color" value="#ffffff">
+                    <input type="range" id="label-size" min="10" max="32" value="14">
                 </div>
             </div>
 

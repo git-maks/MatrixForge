@@ -2,16 +2,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // State
     const state = {
         gridSize: 3,
-        data: Array(16).fill(0), // Max 4x4
+        data: Array(25).fill(0), // Max 5x5
         bgImage: null, // Data URL
         bgImageAspect: 1,
         colors: ['#ffffff', '#0000ff'], // Array of colors
         opacity: 0.5,
         text: { color: '#000000', size: 24, stroke: false },
         header: { color: '#ffffff', size: 24, stroke: false },
+        label: { color: '#ffffff', size: 14, stroke: false },
         labels: {
-            x: Array(4).fill(''),
-            y: Array(4).fill('')
+            x: Array(5).fill(''),
+            y: Array(5).fill('')
         }
     };
 
@@ -41,7 +42,10 @@ document.addEventListener('DOMContentLoaded', () => {
         scaleQ3: document.getElementById('scale-q3'),
         headerColor: document.getElementById('header-color'),
         headerSize: document.getElementById('header-size'),
-        headerStroke: document.getElementById('header-stroke')
+        headerStroke: document.getElementById('header-stroke'),
+        labelColor: document.getElementById('label-color'),
+        labelSize: document.getElementById('label-size'),
+        labelStroke: document.getElementById('label-stroke')
     };
 
     // Constants
@@ -101,8 +105,10 @@ document.addEventListener('DOMContentLoaded', () => {
             updateMatrixBackground();
         });
 
-        elements.textStroke.addEventListener('change', (e) => {
-            state.text.stroke = e.target.checked;
+        elements.textStroke.addEventListener('click', (e) => {
+            e.preventDefault();
+            state.text.stroke = !state.text.stroke;
+            elements.textStroke.classList.toggle('active', state.text.stroke);
             updateTextStyle();
         });
 
@@ -116,9 +122,29 @@ document.addEventListener('DOMContentLoaded', () => {
             updateTitleStyle();
         });
 
-        elements.headerStroke.addEventListener('change', (e) => {
-            state.header.stroke = e.target.checked;
+        elements.headerStroke.addEventListener('click', (e) => {
+            e.preventDefault();
+            state.header.stroke = !state.header.stroke;
+            elements.headerStroke.classList.toggle('active', state.header.stroke);
             updateTitleStyle();
+            updateLabelStyle();
+        });
+
+        elements.labelColor.addEventListener('input', (e) => {
+            state.label.color = e.target.value;
+            updateLabelStyle();
+        });
+
+        elements.labelSize.addEventListener('input', (e) => {
+            state.label.size = parseInt(e.target.value);
+            updateLabelStyle();
+        });
+
+        elements.labelStroke.addEventListener('click', (e) => {
+            e.preventDefault();
+            state.label.stroke = !state.label.stroke;
+            elements.labelStroke.classList.toggle('active', state.label.stroke);
+            updateLabelStyle();
         });
 
         elements.matrixTitle.addEventListener('input', () => {
@@ -342,6 +368,8 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCellBackgrounds();
         updateHeatmap();
         updateTextStyle();
+        updateTitleStyle();
+        updateLabelStyle();
         updateStats();
         updateScale();
         updateTitleWidth();
@@ -544,6 +572,17 @@ document.addEventListener('DOMContentLoaded', () => {
             title.classList.remove('text-stroke');
         }
 
+        // Also update axis labels (Predicted Class, True Class)
+        const axisLabels = document.querySelectorAll('.axis-label');
+        axisLabels.forEach(label => {
+            label.style.color = state.header.color;
+            if (state.header.stroke) {
+                label.classList.add('text-stroke');
+            } else {
+                label.classList.remove('text-stroke');
+            }
+        });
+
         updateTitleWidth();
     }
 
@@ -615,6 +654,32 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.accuracyValue.textContent = `${accuracy.toFixed(1)}%`;
     }
 
+    function updateLabelStyle() {
+        // Update grid labels (sublabels - Label 1, Label 2, etc.)
+        const gridLabels = document.querySelectorAll('.grid-label input');
+        gridLabels.forEach(label => {
+            label.style.color = state.label.color;
+            label.style.fontSize = `${state.label.size}px`;
+            if (state.label.stroke) {
+                label.classList.add('label-stroke');
+            } else {
+                label.classList.remove('label-stroke');
+            }
+        });
+
+        // Update scale labels
+        const scaleLabels = document.querySelectorAll('.scale-label');
+        scaleLabels.forEach(label => {
+            label.style.color = state.label.color;
+            label.style.fontSize = `${state.label.size}px`;
+            if (state.label.stroke) {
+                label.classList.add('label-stroke');
+            } else {
+                label.classList.remove('label-stroke');
+            }
+        });
+    }
+
     function updateScale() {
         if (elements.colorScale) {
             const gradient = state.colors.join(', ');
@@ -671,7 +736,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const options = {
-            pixelRatio: 2,
+            pixelRatio: 3,
             quality: 1.0
         };
 
